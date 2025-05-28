@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent d'Objectifs d'Apprentissage</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .result-section {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            background-color: #f8f9fa;
+        }
+        .taxonomy-level {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            margin: 0.25rem;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+        }
+        .level-se-souvenir { background-color: #f8d7da; }
+        .level-comprendre { background-color: #d1ecf1; }
+        .level-appliquer { background-color: #d4edda; }
+        .level-analyser { background-color: #fff3cd; }
+        .level-evaluer { background-color: #e2e3e5; }
+        .level-creer { background-color: #cfe2ff; }
+        
+        #loadingSpinner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Agent d'Objectifs d'Apprentissage</h1>
+        <p class="lead text-center">Analysez et améliorez vos objectifs d'apprentissage selon la taxonomie de Bloom</p>
+        
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Contenu pédagogique</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="contentForm">
+                            <div class="mb-3">
+                                <textarea class="form-control" id="contentInput" rows="8" placeholder="Entrez votre contenu pédagogique ou vos objectifs d'apprentissage ici..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Analyser</button>
+                            <div class="mt-3" id="loadingSpinner">
+                                <div class="d-flex align-items-center">
+                                    <strong>Analyse en cours...</strong>
+                                    <div class="spinner-border ms-3" role="status"></div>
+                                </div>
+                                <p class="text-muted mt-2">Ce processus peut prendre jusqu'à une minute.</p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="resultsContainer" style="display: none;">
+            <h2 class="mb-4 text-center">Résultats de l'analyse</h2>
+            
+            <!-- Objectifs extraits -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">Objectifs extraits</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul id="extractedObjectives" class="list-group list-group-flush"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Analyse de contenu -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0">Analyse du contenu</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="contentAnalysis"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Classification Bloom -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">Classification selon la taxonomie de Bloom</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="bloomClassification"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Objectifs reformulés -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0">Objectifs reformulés (SMART)</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="formattedObjectives"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Évaluation de difficulté -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">Évaluation de la difficulté</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="difficultyEvaluation"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recommandations -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-secondary text-white">
+                            <h5 class="mb-0">Recommandations de ressources</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="recommendations"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feedback général -->
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-dark text-white">
+                            <h5 class="mb-0">Feedback général</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="feedback"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('contentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const content = document.getElementById('contentInput').value;
+            if (!content.trim()) {
+                alert('Veuillez entrer du contenu pédagogique.');
+                return;
+            }
+            
+            // Afficher le spinner de chargement
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            // Cacher les résultats précédents
+            document.getElementById('resultsContainer').style.display = 'none';
+            
+            // Envoi des données au serveur
+            fetch('/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'content': content
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Masquer le spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // Afficher les résultats
+                document.getElementById('resultsContainer').style.display = 'block';
+                
+                // Remplir les objectifs extraits
+                const objectivesList = document.getElementById('extractedObjectives');
+                objectivesList.innerHTML = '';
+                data.objectives.forEach(obj => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = obj;
+                    objectivesList.appendChild(li);
+                });
+                
+                // Remplir l'analyse de contenu
+                document.getElementById('contentAnalysis').innerHTML = data.content_analysis.replace(/\n/g, '<br>');
+                
+                // Remplir la classification Bloom
+                document.getElementById('bloomClassification').innerHTML = data.classification.replace(/\n/g, '<br>');
+                
+                // Remplir les objectifs reformulés
+                document.getElementById('formattedObjectives').innerHTML = data.formatted_objectives.replace(/\n/g, '<br>');
+                
+                // Remplir l'évaluation de difficulté
+                document.getElementById('difficultyEvaluation').innerHTML = data.difficulty_evaluation.replace(/\n/g, '<br>');
+                
+                // Remplir les recommandations
+                document.getElementById('recommendations').innerHTML = data.recommendations.replace(/\n/g, '<br>');
+                
+                // Remplir le feedback
+                document.getElementById('feedback').innerHTML = data.feedback.replace(/\n/g, '<br>');
+                
+                // Faire défiler jusqu'aux résultats
+                document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                document.getElementById('loadingSpinner').style.display = 'none';
+                alert('Une erreur est survenue lors du traitement. Veuillez réessayer.');
+            });
+        });
+    </script>
+</body>
+</html>
