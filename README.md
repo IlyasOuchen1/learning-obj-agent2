@@ -12,19 +12,22 @@ Un agent d'intelligence artificielle qui utilise la taxonomie de Bloom pour anal
 - **Recommandations**: Suggère des activités, méthodes d'évaluation et ressources adaptées
 - **Feedback constructif**: Fournit une analyse critique de l'ensemble des objectifs
 - **Interface utilisateur moderne**: Interface Streamlit intuitive avec visualisations interactives
+- **Gestion de documents**: Support pour l'upload et l'analyse de documents PDF, TXT et DOCX
+- **Recherche sémantique**: Recherche intelligente dans les documents chargés
+- **Stockage vectoriel**: Utilisation de Pinecone pour l'indexation et la recherche de contenu
 
 ## Structure du Projet
 
 ```
 learning-objective-agent/
 ├── streamlit_app2.py      # Application principale Streamlit
-├── agent.py              # Logique principale de l'agent
-├── components.py         # Composants de traitement (extracteur, analyseur, etc.)
-├── config.py            # Configuration (API keys, paramètres)
-├── bloom_taxonomy.py    # Définitions de la taxonomie de Bloom
-├── requirements.txt     # Dépendances Python
-├── outputs/            # Dossier pour les résultats générés
-└── README.md          # Documentation
+├── enhanced_agent.py      # Agent amélioré avec gestion de documents
+├── components.py          # Composants de traitement (extracteur, analyseur, etc.)
+├── config.py             # Configuration (API keys, paramètres)
+├── bloom_taxonomy.py     # Définitions de la taxonomie de Bloom
+├── requirements.txt      # Dépendances Python
+├── outputs/             # Dossier pour les résultats générés
+└── README.md           # Documentation
 ```
 
 ## Installation
@@ -49,14 +52,16 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Configurez votre clé API OpenAI:
-   - Créez un fichier `config.py` avec votre clé API
-   - Ou définissez la variable d'environnement:
+4. Configurez vos clés API:
+   - Créez un fichier `config.py` avec vos clés API
+   - Ou définissez les variables d'environnement:
 ```bash
 # Sur Windows
 set OPENAI_API_KEY=votre-clé-api
+set PINECONE_API_KEY=votre-clé-pinecone
 # Sur Linux/Mac
 export OPENAI_API_KEY=votre-clé-api
+export PINECONE_API_KEY=votre-clé-pinecone
 ```
 
 ## Utilisation
@@ -69,16 +74,21 @@ streamlit run streamlit_app2.py
 ```
 
 2. Accédez à l'interface web dans votre navigateur (généralement http://localhost:8501)
-3. Entrez votre contenu pédagogique dans l'interface
-4. Visualisez les résultats avec les graphiques interactifs
+3. Vous pouvez:
+   - Entrer du texte directement dans l'interface
+   - Uploader des documents (PDF, TXT, DOCX)
+   - Rechercher dans les documents chargés
+   - Visualiser les résultats avec les graphiques interactifs
+   -Entrez votre contenu pédagogique dans l'interface
+   -Visualisez les résultats avec les graphiques interactifs
 
 ### Utilisation Programmatique
 
 ```python
-from agent import LearningObjectiveAgent
+from enhanced_agent import EnhancedLearningObjectiveAgent
 
 # Initialisation de l'agent
-agent = LearningObjectiveAgent(api_key="votre-clé-api")
+agent = EnhancedLearningObjectiveAgent(api_key="votre-clé-api")
 
 # Traitement du contenu
 content = """
@@ -87,6 +97,11 @@ Les étudiants devront implémenter des modèles simples et analyser leurs perfo
 """
 
 results = agent.process_content(content)
+
+# Traitement de documents
+files = ["document1.pdf", "document2.docx"]
+session_id = "unique_session_id"
+results = agent.process_uploaded_files(files, session_id)
 
 # Accès aux résultats
 objectives = results["objectives"]
@@ -97,6 +112,10 @@ formatted_objectives = results["formatted_objectives"]["formatted_objectives"]
 ## Fonctionnalités de l'Interface
 
 - **Interface moderne**: Design sombre avec une mise en page claire
+- **Gestion de documents**: 
+  - Upload multiple de fichiers
+  - Support PDF, TXT, DOCX
+  - Recherche sémantique
 - **Visualisations interactives**: 
   - Distribution des niveaux de Bloom
   - Niveaux de difficulté
@@ -117,6 +136,7 @@ Vous pouvez personnaliser:
 - Les paramètres de l'agent dans `config.py`
 - L'interface utilisateur dans `streamlit_app2.py`
 - La taxonomie de Bloom dans `bloom_taxonomy.py`
+- Les paramètres de stockage vectoriel dans `enhanced_agent.py`
 
 ## Contribuer
 
